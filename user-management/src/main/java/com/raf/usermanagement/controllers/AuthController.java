@@ -2,7 +2,6 @@ package com.raf.usermanagement.controllers;
 
 import com.raf.usermanagement.request.LoginRequest;
 import com.raf.usermanagement.response.LoginResponse;
-import com.raf.usermanagement.services.UserService;
 import com.raf.usermanagement.utils.JwtUtil;
 
 import org.springframework.http.ResponseEntity;
