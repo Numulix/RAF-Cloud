@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,7 +57,7 @@ public class UserController {
         return ResponseEntity.status(401).build();
     }
 
-    @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createUser(@RequestBody CreateUserRequest toCreateUser) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> user = userService.findById(username);
@@ -84,13 +86,39 @@ public class UserController {
                 UserResponse response = new UserResponse(toAdd.getName(), toAdd.getSurname(), toAdd.getEmail(), toAdd.getPermission());
 
                 return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(403).build();
             }
 
         } else {
-            return ResponseEntity.status(403).build();
+            return ResponseEntity.status(401).build();
         }
-        return ResponseEntity.status(401).build();
 
+    }
+
+    @DeleteMapping(value = "/delete/{email}")
+    public ResponseEntity<?> deleteUser(@PathVariable String email) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userService.findById(username);
+
+        if (user.isPresent()) {
+            User u = user.get();
+
+            if (u.getPermission().getCanDeleteUser() == 1) {
+                Optional<User> toDelete = userService.findById(email);
+                if (toDelete.isPresent()) {
+                    userService.delete(email);
+                    return ResponseEntity.noContent().build();
+                } else {
+                    return ResponseEntity.status(404).body("User with given email not found");
+                }
+
+            } else {
+                return ResponseEntity.status(403).build();
+            }
+        }
+
+        return ResponseEntity.status(401).build();
     }
 
 }
