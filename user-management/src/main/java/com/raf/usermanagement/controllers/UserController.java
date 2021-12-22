@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -117,6 +118,42 @@ public class UserController {
                 return ResponseEntity.status(403).build();
             }
         }
+
+        return ResponseEntity.status(401).build();
+    }
+
+    @PutMapping(value = "/update/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateUser(@PathVariable String email, @RequestBody CreateUserRequest toCreateUser) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userService.findById(username);
+
+        if (user.isPresent()) {
+            Optional<User> toEdit = userService.findById(email);
+            if (toEdit.isPresent()) {
+
+                if (user.get().getPermission().getCanUpdateUser() == 1) {
+                    User edittedUser = toEdit.get();
+
+                    edittedUser.setName(toCreateUser.getName());
+                    edittedUser.setSurname(toCreateUser.getSurname());
+                    edittedUser.setPassword(passwordEncoder.encode(toCreateUser.getPassword()));
+                    edittedUser.setPermission(toCreateUser.getPermission());
+
+                    userService.save(edittedUser);
+
+                    return ResponseEntity.ok().body(new UserResponse(
+                        edittedUser.getName(),
+                        edittedUser.getSurname(), 
+                        edittedUser.getEmail(), 
+                        edittedUser.getPermission()));
+                } else {
+                    return ResponseEntity.status(403).build();
+                }
+
+            } else {
+                return ResponseEntity.status(404).body("User with given email not found");
+            }
+        } 
 
         return ResponseEntity.status(401).build();
     }
