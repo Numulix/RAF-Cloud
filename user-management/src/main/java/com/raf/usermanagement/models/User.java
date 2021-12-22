@@ -31,6 +31,18 @@ public class User {
     })
     private Permission permission;
 
+    public User() {
+
+    }
+
+    public User(String email, String name, String surname, String password, Permission permission) {
+        this.email = email;
+        this.name = name;
+        this.surname = surname;
+        this.password = password;
+        this.permission = permission;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
