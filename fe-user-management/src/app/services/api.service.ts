@@ -19,4 +19,11 @@ export class ApiService {
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${environment.BASE_URL}/api/users/all`);
   }
+
+  createNewUser(formData: any): Observable<any> {
+    return this.http.post<any>(
+      `${environment.BASE_URL}/api/users/create`,
+      formData
+    )
+  }
 }

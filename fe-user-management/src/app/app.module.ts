@@ -7,17 +7,19 @@ import { LoginComponent } from './components/login/login.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HomeComponent } from './components/home/home.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
+import { CreateUserComponent } from './components/create-user/create-user.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     NavbarComponent,
-    HomeComponent
+    HomeComponent,
+    CreateUserComponent
   ],
   imports: [
     BrowserModule,
@@ -26,6 +28,7 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
     ToastrModule.forRoot(),
     FormsModule,
     HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [
     {
