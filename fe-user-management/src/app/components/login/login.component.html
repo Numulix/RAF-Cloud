@@ -1,5 +1,5 @@
 <div class="main-div">
-    <h1 class="text-center display-1 text-light">RAF Cloud</h1>
+    <h1 class="text-center display-1 text-light pt-5">RAF Cloud</h1>
     <div class="container mt-5">
         <div class="row d-flex justify-content-center">
             <div class="col-md-6">
@@ -7,14 +7,14 @@
                     <div class="form-data">
                         <div class="forms-inputs mb-4 w-100">
                             <span>Email</span>
-                            <input type="text" autocomplete="off" class="form-control">
+                            <input type="text" autocomplete="off" class="form-control" [(ngModel)]="username">
                         </div>
                         <div class="forms-inputs mb-4">
                             <span>Password</span>
-                            <input type="password" class="form-control">
+                            <input type="password" class="form-control" [(ngModel)]="password">
                         </div>
                         <div class="mb-3">
-                            <button class="btn btn-dark w-100">Login</button>
+                            <button class="btn btn-dark w-100" (click)="handleLogin()">Login</button>
                         </div>
                     </div>
                 </div>

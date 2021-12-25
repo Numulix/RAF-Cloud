@@ -3,7 +3,12 @@ package com.raf.usermanagement.utils;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
+import com.raf.usermanagement.models.User;
+import com.raf.usermanagement.services.UserService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import io.jsonwebtoken.Claims;
@@ -15,6 +20,13 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
     private final String SECRET_KEY = "my_jwt_secret";
+
+    private final UserService userService;
+
+    @Autowired
+    public JwtUtil(UserService userService) {
+        this.userService = userService;
+    }
 
     public Claims extractClaims(String token) {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
@@ -30,6 +42,8 @@ public class JwtUtil {
 
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
+        Optional<User> user = userService.findById(username);
+        claims.put("permissions", user.get().getPermission());
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
