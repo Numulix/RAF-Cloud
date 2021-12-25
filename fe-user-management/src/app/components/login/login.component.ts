@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from 'src/app/services/api.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +16,9 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private toastr: ToastrService,
-    private api: ApiService
+    private api: ApiService,
+    private userService: UserService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -29,6 +33,8 @@ export class LoginComponent implements OnInit {
     ).subscribe(
       (response) => {
         localStorage.setItem('jwt_token', response.jwt);
+        this.userService.login(response.jwt);
+        this.router.navigate(['/']);
         this.toastr.success('Logged in!')
       },
       (err) => {
