@@ -5,6 +5,8 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -16,6 +18,9 @@ import lombok.Data;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String email;
 
     private String name;
@@ -41,15 +46,6 @@ public class User {
         this.surname = surname;
         this.password = password;
         this.permission = permission;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Id
-    public String getEmail() {
-        return email;
     }
     
 }

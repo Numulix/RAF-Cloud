@@ -13,6 +13,8 @@ export class HomeComponent implements OnInit {
   userList: User[] = []
   hasPermission: boolean = true;
 
+  canUpdate: number = this.userService.permissions.canUpdateUser
+
   constructor(
     private api: ApiService,
     private userService: UserService

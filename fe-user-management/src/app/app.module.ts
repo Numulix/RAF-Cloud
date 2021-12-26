@@ -12,6 +12,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HomeComponent } from './components/home/home.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { CreateUserComponent } from './components/create-user/create-user.component';
+import { EditUserComponent } from './components/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { CreateUserComponent } from './components/create-user/create-user.compon
     LoginComponent,
     NavbarComponent,
     HomeComponent,
-    CreateUserComponent
+    CreateUserComponent,
+    EditUserComponent
   ],
   imports: [
     BrowserModule,

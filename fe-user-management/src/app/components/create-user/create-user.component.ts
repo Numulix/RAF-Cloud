@@ -56,6 +56,12 @@ export class CreateUserComponent implements OnInit {
       res => {
         this.newUserForm.reset()
         this.toastr.success('User created successfully');
+      }, err => {
+        if (err.status == 400) {
+          this.toastr.error('User with that email already exists')
+        } else {
+          this.toastr.error('Server error')
+        }
       }
     )
   }

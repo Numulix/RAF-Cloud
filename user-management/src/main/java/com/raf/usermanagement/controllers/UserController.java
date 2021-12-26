@@ -39,7 +39,7 @@ public class UserController {
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userService.findById(username);
+        Optional<User> user = userService.findByEmail(username);
 
         if (user.isPresent()) {
             User u = user.get();
@@ -47,7 +47,7 @@ public class UserController {
                 List<User> userList = userService.findAll();
                 List<UserResponse> returnList = new ArrayList<>();
                 for (User toAdd: userList) {
-                    returnList.add(new UserResponse(toAdd.getName(), toAdd.getSurname(), toAdd.getEmail(), toAdd.getPermission()));
+                    returnList.add(new UserResponse(toAdd.getId(), toAdd.getName(), toAdd.getSurname(), toAdd.getEmail(), toAdd.getPermission()));
                 }
 
                 return ResponseEntity.ok(returnList);
@@ -61,14 +61,14 @@ public class UserController {
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createUser(@RequestBody CreateUserRequest toCreateUser) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userService.findById(username);
+        Optional<User> user = userService.findByEmail(username);
 
         if (user.isPresent()) {
             User u = user.get();
 
             if (u.getPermission().getCanCreateUser() == 1) {
 
-                Optional<User> existingUser = userService.findById(toCreateUser.getEmail());
+                Optional<User> existingUser = userService.findByEmail(toCreateUser.getEmail());
 
                 if (existingUser.isPresent()) {
                     return ResponseEntity.status(400).body("User with that email already exists");
@@ -100,15 +100,15 @@ public class UserController {
     @DeleteMapping(value = "/delete/{email}")
     public ResponseEntity<?> deleteUser(@PathVariable String email) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userService.findById(username);
+        Optional<User> user = userService.findByEmail(username);
 
         if (user.isPresent()) {
             User u = user.get();
 
             if (u.getPermission().getCanDeleteUser() == 1) {
-                Optional<User> toDelete = userService.findById(email);
+                Optional<User> toDelete = userService.findByEmail(email);
                 if (toDelete.isPresent()) {
-                    userService.delete(email);
+                    userService.delete(toDelete.get().getId());
                     return ResponseEntity.noContent().build();
                 } else {
                     return ResponseEntity.status(404).body("User with given email not found");
@@ -121,14 +121,44 @@ public class UserController {
 
         return ResponseEntity.status(401).build();
     }
-
-    @PutMapping(value = "/update/{email}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateUser(@PathVariable String email, @RequestBody CreateUserRequest toCreateUser) {
+    
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable String id) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userService.findById(username);
+        Optional<User> user = userService.findByEmail(username);
 
         if (user.isPresent()) {
-            Optional<User> toEdit = userService.findById(email);
+            User u = user.get();
+
+            if (u.getPermission().getCanReadUser() == 1) {
+                Optional<User> userWithId = userService.findById((Long.parseLong(id)));
+                if (userWithId.isPresent()) {
+                    return ResponseEntity.ok().body(
+                        new UserResponse(
+                            userWithId.get().getId(),
+                            userWithId.get().getName(),
+                            userWithId.get().getSurname(), 
+                            userWithId.get().getEmail(), 
+                            userWithId.get().getPermission())
+                    );
+                } else {
+                    return ResponseEntity.notFound().build();
+                }
+            } else {
+                return ResponseEntity.status(403).build();
+            }
+        }
+
+        return ResponseEntity.status(401).build();
+    }
+
+    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody CreateUserRequest toCreateUser) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userService.findByEmail(username);
+
+        if (user.isPresent()) {
+            Optional<User> toEdit = userService.findById(Long.parseLong(id));
             if (toEdit.isPresent()) {
 
                 if (user.get().getPermission().getCanUpdateUser() == 1) {
@@ -137,6 +167,7 @@ public class UserController {
                     edittedUser.setName(toCreateUser.getName());
                     edittedUser.setSurname(toCreateUser.getSurname());
                     edittedUser.setPassword(passwordEncoder.encode(toCreateUser.getPassword()));
+                    edittedUser.setEmail(toCreateUser.getEmail());
                     edittedUser.setPermission(toCreateUser.getPermission());
 
                     userService.save(edittedUser);

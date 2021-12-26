@@ -42,7 +42,7 @@ public class JwtUtil {
 
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
-        Optional<User> user = userService.findById(username);
+        Optional<User> user = userService.findByEmail(username);
         claims.put("permissions", user.get().getPermission());
         return Jwts.builder()
                 .setClaims(claims)

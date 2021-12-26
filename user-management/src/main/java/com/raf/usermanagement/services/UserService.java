@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService implements IService<User, String>, UserDetailsService {
+public class UserService implements IService<User, Long>, UserDetailsService {
     
     private final UserRepository userRepository;
     private final UserLoginRepository userLoginRepository;
@@ -37,13 +37,22 @@ public class UserService implements IService<User, String>, UserDetailsService {
     }
 
     @Override
-    public Optional<User> findById(String email) {
-        return userRepository.findById(email);
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
     
     @Override
-    public void delete(String email) {
-        userRepository.deleteById(email);
+    public void delete(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        User nullUser = null;
+        for (User user: userRepository.findAll()) {
+            if (user.getEmail().equals(email)) return Optional.ofNullable(user);
+        }
+        return Optional.ofNullable(nullUser);
     }
 
     @Override

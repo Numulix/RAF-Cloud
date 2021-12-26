@@ -26,4 +26,13 @@ export class ApiService {
       formData
     )
   }
+
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${environment.BASE_URL}/api/users/${id}`);
+  }
+
+  editUser(id: number, formData: any) {
+    return this.http.put<any>(`${environment.BASE_URL}/api/users/update/${id}`, formData);
+  }
+
 }
