@@ -97,8 +97,8 @@ public class UserController {
 
     }
 
-    @DeleteMapping(value = "/delete/{email}")
-    public ResponseEntity<?> deleteUser(@PathVariable String email) {
+    @DeleteMapping(value = "/delete/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> user = userService.findByEmail(username);
 
@@ -106,7 +106,7 @@ public class UserController {
             User u = user.get();
 
             if (u.getPermission().getCanDeleteUser() == 1) {
-                Optional<User> toDelete = userService.findByEmail(email);
+                Optional<User> toDelete = userService.findById(Long.parseLong(id));
                 if (toDelete.isPresent()) {
                     userService.delete(toDelete.get().getId());
                     return ResponseEntity.noContent().build();
@@ -166,7 +166,6 @@ public class UserController {
 
                     edittedUser.setName(toCreateUser.getName());
                     edittedUser.setSurname(toCreateUser.getSurname());
-                    edittedUser.setPassword(passwordEncoder.encode(toCreateUser.getPassword()));
                     edittedUser.setEmail(toCreateUser.getEmail());
                     edittedUser.setPermission(toCreateUser.getPermission());
 

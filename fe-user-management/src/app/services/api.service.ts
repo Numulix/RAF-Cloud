@@ -35,4 +35,10 @@ export class ApiService {
     return this.http.put<any>(`${environment.BASE_URL}/api/users/update/${id}`, formData);
   }
 
+  deleteUser(id: number) {
+    return this.http.delete<any>(
+      `${environment.BASE_URL}/api/users/delete/${id}`
+    )
+  }
+
 }

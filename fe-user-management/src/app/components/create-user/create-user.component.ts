@@ -25,7 +25,7 @@ export class CreateUserComponent implements OnInit {
       name: ['', [Validators.required]],
       surname: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['default', [Validators.required]],
+      password: ['', [Validators.required]],
       permission: this.fb.group({
         canReadUser: [false],
         canCreateUser: [false],
