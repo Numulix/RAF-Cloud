@@ -11,4 +11,10 @@ public class Permission {
     private int canReadUser;
     private int canUpdateUser;
     private int canDeleteUser;
+    private int canSearchMachine;
+    private int canStartMachine;
+    private int canStopMachine;
+    private int canRestartMachine;
+    private int canCreateMachine;
+    private int canDestroyMachine;
 }
