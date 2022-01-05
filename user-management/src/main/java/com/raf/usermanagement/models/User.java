@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Data
@@ -26,6 +28,8 @@ public class User {
 
     private String name;
     private String surname;
+
+    @JsonIgnore
     private String password;
 
     @Embedded

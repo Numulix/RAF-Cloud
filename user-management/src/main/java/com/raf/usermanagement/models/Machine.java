@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.raf.usermanagement.enums.Status;
 
 import lombok.Data;
@@ -28,6 +29,7 @@ public class Machine {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "createdBy")
+    @JsonIgnore
     private User user;
 
     private boolean active;
