@@ -169,4 +169,30 @@ public class MachineController {
         return ResponseEntity.status(401).build();
     }
 
+    @PatchMapping(value = "/restart/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> restartMachine(@PathVariable ("id") String id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userService.findByEmail(username);
+
+        if (user.isPresent()) {
+            User u = user.get();
+            if (u.getPermission().getCanRestartMachine() == 1) {
+
+                // check if machine is busy
+                if (machineService.isBusy(Long.parseLong(id))) {
+                    return ResponseEntity.status(409).body("Machine is going through an operation");
+                }
+
+                if (machineService.canStopMachine(Long.parseLong(id))) {
+                    machineService.restartMachine(Long.parseLong(id));
+                    return ResponseEntity.ok().build();
+                }
+                return ResponseEntity.status(400).body("Machine is not in a correct state");
+            } else {
+                return ResponseEntity.status(403).build();
+            }
+        }
+        return ResponseEntity.status(401).build();
+    }
+
 }

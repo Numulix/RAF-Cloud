@@ -172,6 +172,32 @@ public class MachineService {
         }
     }
 
+    @Async
+    public void restartMachine(Long id) {
+        Optional<Machine> machine = machineRepository.findById(id);
+        if (machine.isPresent()) {
+            Machine m = machine.get();
+
+            if (m.getStatus() == Status.STOPPED) {
+                return;
+            }
+
+            m.setOperationActive(true);
+            machineRepository.save(m);
+            try {
+                Thread.sleep((long) (Math.random() * (15 - 10) + 10) * 1000);
+                m.setStatus(Status.STOPPED);
+                machineRepository.save(m);
+                Thread.sleep((long) (Math.random() * (15 - 10) + 10) * 1000);
+                m.setStatus(Status.RUNNING);
+                m.setOperationActive(false);
+                machineRepository.save(m);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     // function to check that if a machine can be started
     // a machine can be started only if the status is STOPPED
     public boolean canStartMachine(Long id) {
