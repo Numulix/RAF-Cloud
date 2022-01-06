@@ -128,12 +128,10 @@ public class MachineService {
 
     @Async
     public void startMachine(Long id) {
-        // find the machine by id, set the operationActive to true, and change the status to running after 10 seconds
         Optional<Machine> machine = machineRepository.findById(id);
         if (machine.isPresent()) {
             Machine m = machine.get();
 
-            // check if machine status is RUNNING, if it is, return false
             if (m.getStatus() == Status.RUNNING) {
                 return;
             }
@@ -141,9 +139,31 @@ public class MachineService {
             m.setOperationActive(true);
             machineRepository.save(m);
             try {
-                // thread sleep between 10 and 15s
                 Thread.sleep((long) (Math.random() * (15 - 10) + 10) * 1000);
                 m.setStatus(Status.RUNNING);
+                m.setOperationActive(false);
+                machineRepository.save(m);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Async
+    public void stopMachine(Long id) {
+        Optional<Machine> machine = machineRepository.findById(id);
+        if (machine.isPresent()) {
+            Machine m = machine.get();
+
+            if (m.getStatus() == Status.STOPPED) {
+                return;
+            }
+
+            m.setOperationActive(true);
+            machineRepository.save(m);
+            try {
+                Thread.sleep((long) (Math.random() * (15 - 10) + 10) * 1000);
+                m.setStatus(Status.STOPPED);
                 m.setOperationActive(false);
                 machineRepository.save(m);
             } catch (InterruptedException e) {
@@ -159,6 +179,32 @@ public class MachineService {
         if (machine.isPresent()) {
             Machine m = machine.get();
             if (m.getStatus() == Status.STOPPED) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // check if a machine can be stopped
+    // a machine can be stopped only if the status is RUNNING
+    public boolean canStopMachine(Long id) {
+        Optional<Machine> machine = machineRepository.findById(id);
+        if (machine.isPresent()) {
+            Machine m = machine.get();
+            if (m.getStatus() == Status.RUNNING) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // function to check if a machine is busy
+    // a machine is busy if the operationActive flag is true
+    public boolean isBusy(Long id) {
+        Optional<Machine> machine = machineRepository.findById(id);
+        if (machine.isPresent()) {
+            Machine m = machine.get();
+            if (m.isOperationActive()) {
                 return true;
             }
         }

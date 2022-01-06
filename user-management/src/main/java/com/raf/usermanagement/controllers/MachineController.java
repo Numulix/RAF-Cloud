@@ -125,11 +125,43 @@ public class MachineController {
         if (user.isPresent()) {
             User u = user.get();
             if (u.getPermission().getCanStartMachine() == 1) {
+
+                // check if machine is busy
+                if (machineService.isBusy(Long.parseLong(id))) {
+                    return ResponseEntity.status(409).body("Machine is going through an operation");
+                }
+
                 if (machineService.canStartMachine(Long.parseLong(id))) {
                     machineService.startMachine(Long.parseLong(id));
                     return ResponseEntity.ok().build();
                 }
-                return ResponseEntity.status(400).build();
+                return ResponseEntity.status(400).body("Machine is not in a correct state");
+            } else {
+                return ResponseEntity.status(403).build();
+            }
+        }
+        return ResponseEntity.status(401).build();
+    }
+
+    @PatchMapping(value = "/stop/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> stopMachine(@PathVariable ("id") String id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userService.findByEmail(username);
+
+        if (user.isPresent()) {
+            User u = user.get();
+            if (u.getPermission().getCanStopMachine() == 1) {
+
+                // check if machine is busy
+                if (machineService.isBusy(Long.parseLong(id))) {
+                    return ResponseEntity.status(409).body("Machine is going through an operation");
+                }
+
+                if (machineService.canStopMachine(Long.parseLong(id))) {
+                    machineService.stopMachine(Long.parseLong(id));
+                    return ResponseEntity.ok().build();
+                }
+                return ResponseEntity.status(400).body("Machine is not in a correct state");
             } else {
                 return ResponseEntity.status(403).build();
             }
