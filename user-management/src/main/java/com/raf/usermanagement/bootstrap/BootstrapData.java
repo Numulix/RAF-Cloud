@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.Random;
 
 @Component
@@ -85,7 +86,7 @@ public class BootstrapData implements CommandLineRunner {
             machine.setStatus(random.nextBoolean() ? Status.RUNNING : Status.STOPPED);
             machine.setUser(userRepository.findById(Long.valueOf(random.nextInt(20) + 1)).get());
             machine.setActive(true);
-
+            machine.setCreatedAt(new Date());
             machineRepository.save(machine);
         }
 

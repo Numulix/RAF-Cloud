@@ -1,5 +1,7 @@
 package com.raf.usermanagement.models;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -33,5 +35,7 @@ public class Machine {
     private User user;
 
     private boolean active;
+
+    private Date createdAt;
 
 }
