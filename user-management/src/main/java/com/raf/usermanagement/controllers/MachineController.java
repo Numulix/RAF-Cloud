@@ -1,12 +1,16 @@
 package com.raf.usermanagement.controllers;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 
 import com.raf.usermanagement.enums.Status;
+import com.raf.usermanagement.models.Machine;
 import com.raf.usermanagement.models.User;
 import com.raf.usermanagement.services.MachineService;
 import com.raf.usermanagement.services.UserService;
@@ -188,6 +192,32 @@ public class MachineController {
                     return ResponseEntity.ok().build();
                 }
                 return ResponseEntity.status(400).body("Machine is not in a correct state");
+            } else {
+                return ResponseEntity.status(403).build();
+            }
+        }
+        return ResponseEntity.status(401).build();
+    }
+
+    @PatchMapping(value = "/schedule/stop/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> scheduleStopMachine(@PathVariable ("id") String id,
+     @RequestBody Map<String, String> time) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userService.findByEmail(username);
+
+        if (user.isPresent()) {
+            User u = user.get();
+            if (u.getPermission().getCanStopMachine() == 1) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime dateTime = LocalDateTime.parse(time.get("time"), formatter);
+                // find machine by id
+                Optional<Machine> machine = machineService.findById(Long.parseLong(id));
+
+                if (machine.isPresent()) {
+                    Machine m = machine.get();
+                    machineService.scheduleMachineStop(m.getId(), dateTime);
+                    return ResponseEntity.ok().build();
+                }
             } else {
                 return ResponseEntity.status(403).build();
             }

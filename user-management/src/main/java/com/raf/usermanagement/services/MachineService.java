@@ -1,30 +1,44 @@
 package com.raf.usermanagement.services;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 
 import com.raf.usermanagement.enums.Status;
 import com.raf.usermanagement.models.Machine;
 import com.raf.usermanagement.models.User;
+import com.raf.usermanagement.repositories.ErrorMessageRepository;
 import com.raf.usermanagement.repositories.MachineRepository;
+import com.raf.usermanagement.repositories.UserRepository;
+import com.raf.usermanagement.tasks.StopMachineTask;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MachineService {
+
+    private final TaskScheduler taskScheduler = new ConcurrentTaskScheduler(Executors.newScheduledThreadPool(10));
     
     private final MachineRepository machineRepository;
     private final UserService userService;
+    private final ErrorMessageRepository errorMessageRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public MachineService(MachineRepository machineRepository, UserService userService) {
+    public MachineService(MachineRepository machineRepository, UserService userService, ErrorMessageRepository errorMessageRepository, UserRepository userRepository) {
         this.machineRepository = machineRepository;
         this.userService = userService;
+        this.errorMessageRepository = errorMessageRepository;
+        this.userRepository = userRepository;
     }
 
     // Get all machines from currently logged in user
@@ -36,6 +50,11 @@ public class MachineService {
             return machineRepository.findByUserIdAndActive(u.getId(), true);
         }
         return new ArrayList<Machine>();
+    }
+
+    // Find machine by id
+    public Optional<Machine> findById(Long id) {
+        return machineRepository.findById(id);
     }
 
     public Machine createMachine(String name) {
@@ -235,6 +254,23 @@ public class MachineService {
             }
         }
         return false;
+    }
+
+    public void scheduleMachineStop(Long id, LocalDateTime dateTime) {
+        Optional<Machine> machine = machineRepository.findById(id);
+        if (machine.isPresent()) {
+            // get logged in user
+            Optional<User> u = userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            User user = u.get();
+
+            // get the machine
+            Machine m = machine.get();
+            Date scheduleDate = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+            
+            taskScheduler.schedule(
+                new StopMachineTask(m.getId(), user.getId(), machineRepository, errorMessageRepository, userService),
+                scheduleDate);
+        }
     }
 
 }
