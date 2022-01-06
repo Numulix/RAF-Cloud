@@ -9,9 +9,9 @@ import com.raf.usermanagement.enums.Status;
 import com.raf.usermanagement.models.Machine;
 import com.raf.usermanagement.models.User;
 import com.raf.usermanagement.repositories.MachineRepository;
-import com.raf.usermanagement.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +49,7 @@ public class MachineService {
             machine.setActive(true);
             machine.setName(name);
             machine.setCreatedAt(new Date());
+            machine.setOperationActive(false);
             return machineRepository.save(machine);
         }
         return null;
@@ -123,6 +124,45 @@ public class MachineService {
             }
         }
         return new ArrayList<Machine>();
+    }
+
+    @Async
+    public void startMachine(Long id) {
+        // find the machine by id, set the operationActive to true, and change the status to running after 10 seconds
+        Optional<Machine> machine = machineRepository.findById(id);
+        if (machine.isPresent()) {
+            Machine m = machine.get();
+
+            // check if machine status is RUNNING, if it is, return false
+            if (m.getStatus() == Status.RUNNING) {
+                return;
+            }
+
+            m.setOperationActive(true);
+            machineRepository.save(m);
+            try {
+                // thread sleep between 10 and 15s
+                Thread.sleep((long) (Math.random() * (15 - 10) + 10) * 1000);
+                m.setStatus(Status.RUNNING);
+                m.setOperationActive(false);
+                machineRepository.save(m);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // function to check that if a machine can be started
+    // a machine can be started only if the status is STOPPED
+    public boolean canStartMachine(Long id) {
+        Optional<Machine> machine = machineRepository.findById(id);
+        if (machine.isPresent()) {
+            Machine m = machine.get();
+            if (m.getStatus() == Status.STOPPED) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -87,6 +87,7 @@ public class BootstrapData implements CommandLineRunner {
             machine.setUser(userRepository.findById(Long.valueOf(random.nextInt(20) + 1)).get());
             machine.setActive(true);
             machine.setCreatedAt(new Date());
+            machine.setOperationActive(false);
             machineRepository.save(machine);
         }
 

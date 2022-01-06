@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 
-import javax.websocket.server.PathParam;
 
 import com.raf.usermanagement.enums.Status;
 import com.raf.usermanagement.models.User;
@@ -19,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -115,6 +115,26 @@ public class MachineController {
             }
         }
         return null;
+    }
+
+    @PatchMapping(value = "/start/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> startMachine(@PathVariable ("id") String id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userService.findByEmail(username);
+
+        if (user.isPresent()) {
+            User u = user.get();
+            if (u.getPermission().getCanStartMachine() == 1) {
+                if (machineService.canStartMachine(Long.parseLong(id))) {
+                    machineService.startMachine(Long.parseLong(id));
+                    return ResponseEntity.ok().build();
+                }
+                return ResponseEntity.status(400).build();
+            } else {
+                return ResponseEntity.status(403).build();
+            }
+        }
+        return ResponseEntity.status(401).build();
     }
 
 }
