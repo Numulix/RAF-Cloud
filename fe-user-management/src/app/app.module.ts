@@ -13,6 +13,9 @@ import { HomeComponent } from './components/home/home.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { CreateUserComponent } from './components/create-user/create-user.component';
 import { EditUserComponent } from './components/edit-user/edit-user.component';
+import { MachinesComponent } from './components/machines/machines.component';
+import { CreateMachineComponent } from './components/create-machine/create-machine.component';
+import { ErrorLogsComponent } from './components/error-logs/error-logs.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +24,10 @@ import { EditUserComponent } from './components/edit-user/edit-user.component';
     NavbarComponent,
     HomeComponent,
     CreateUserComponent,
-    EditUserComponent
+    EditUserComponent,
+    MachinesComponent,
+    CreateMachineComponent,
+    ErrorLogsComponent
   ],
   imports: [
     BrowserModule,

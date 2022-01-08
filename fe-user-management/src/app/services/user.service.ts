@@ -42,7 +42,13 @@ export class UserService {
       this.permissions.canReadUser == 0 &&
       this.permissions.canDeleteUser == 0 &&
       this.permissions.canUpdateUser == 0 &&
-      this.permissions.canCreateUser == 0
+      this.permissions.canCreateUser == 0 &&
+      this.permissions.canSearchMachine == 0 &&
+      this.permissions.canStartMachine == 0 &&
+      this.permissions.canStopMachine == 0 &&
+      this.permissions.canRestartMachine == 0 &&
+      this.permissions.canCreateMachine == 0 &&
+      this.permissions.canDestroyMachine == 0
     ) {
       alert('User has no permissions, logging out');
       this.logout();
