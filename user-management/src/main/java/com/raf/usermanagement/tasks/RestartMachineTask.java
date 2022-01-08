@@ -11,7 +11,7 @@ import com.raf.usermanagement.repositories.ErrorMessageRepository;
 import com.raf.usermanagement.repositories.MachineRepository;
 import com.raf.usermanagement.services.UserService;
 
-public class StopMachineTask implements Runnable {
+public class RestartMachineTask implements Runnable {
     
     private Long machineId;
     private Long userId;
@@ -19,7 +19,7 @@ public class StopMachineTask implements Runnable {
     private final ErrorMessageRepository errorMessageRepository;
     private final UserService userService;
 
-    public StopMachineTask(Long machineId, Long userId, MachineRepository machineRepository, ErrorMessageRepository errorMessageRepository, UserService userService) {
+    public RestartMachineTask(Long machineId, Long userId, MachineRepository machineRepository, ErrorMessageRepository errorMessageRepository, UserService userService) {
         this.machineId = machineId;
         this.userId = userId;
         this.machineRepository = machineRepository;
@@ -31,7 +31,7 @@ public class StopMachineTask implements Runnable {
     public void run() {
         Optional<User> user = userService.findById(userId);
 
-        System.out.println("Stopping machine with id");
+        System.out.println("Restarting machine with id");
 
         if (user.isPresent()) {
             User u = user.get();
@@ -42,7 +42,7 @@ public class StopMachineTask implements Runnable {
                 System.out.println("Machine found");
                 // if the machine is already stopped, save a new error message then return
                 if (m.getStatus() == Status.STOPPED) {
-                    ErrorMessage errorMessage = new ErrorMessage(new Date(), m.getId(), this.userId, "STOP", "Machine is already stopped");
+                    ErrorMessage errorMessage = new ErrorMessage(new Date(), m.getId(), this.userId, "RESTART", "Machine cannot be restarted when it's stopped");
                     errorMessageRepository.save(errorMessage);
                     System.out.println("Error message added to DB");
                     return;
@@ -50,7 +50,7 @@ public class StopMachineTask implements Runnable {
 
                 // check if the machine is undergoing an operation
                 if (m.isOperationActive()) {
-                    errorMessageRepository.save(new ErrorMessage(new Date(), m.getId(), this.userId, "STOP", "Tried to stop a machine that was undergoing an operation"));
+                    errorMessageRepository.save(new ErrorMessage(new Date(), m.getId(), this.userId, "RESTART", "Tried to restart a machine that was undergoing an operation"));
                     System.out.println("Error message added to DB");
                 } else {
                     // Thread sleep from 10 to 15 seconds
@@ -58,16 +58,21 @@ public class StopMachineTask implements Runnable {
                         m.setOperationActive(true);
                         machineRepository.save(m);
                         System.out.println("Stopping machine");
-                        Thread.sleep((long) (Math.random() * (15000 - 10000) + 10000));
-                    } catch (Exception e) {
-                        ErrorMessage errorMessage = new ErrorMessage(new Date(), m.getId(), this.userId, "STOP", "Machine cannot be stopped");
-                        errorMessageRepository.save(errorMessage);
-                        System.out.println("Error message added to DB");
+                        Thread.sleep((long) (Math.random() * (7000 - 6000) + 6000));
+                        m.setStatus(Status.STOPPED);
+                        machineRepository.save(m);
+                        System.out.println("Machine stopped");
+                        System.out.print("Starting machine");
+                        Thread.sleep((long) (Math.random() * (8000 - 5000) + 5000));
+                        m.setStatus(Status.RUNNING);
+                        m.setOperationActive(false);
+                        machineRepository.save(m);
+                        System.out.println("Machine started");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    m.setStatus(Status.STOPPED);
-                    m.setOperationActive(false);
-                    machineRepository.save(m);
-                    System.out.println("Machine scheduled stop successful");
+                    
+                    System.out.println("Machine scheduled start successful");
                 }
             }
         }

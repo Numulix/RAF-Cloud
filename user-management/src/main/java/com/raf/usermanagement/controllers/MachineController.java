@@ -225,4 +225,56 @@ public class MachineController {
         return ResponseEntity.status(401).build();
     }
 
+    @PatchMapping(value = "/schedule/start/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> scheduleStartMachine(@PathVariable ("id") String id,
+     @RequestBody Map<String, String> time) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userService.findByEmail(username);
+
+        if (user.isPresent()) {
+            User u = user.get();
+            if (u.getPermission().getCanStartMachine() == 1) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime dateTime = LocalDateTime.parse(time.get("time"), formatter);
+                // find machine by id
+                Optional<Machine> machine = machineService.findById(Long.parseLong(id));
+
+                if (machine.isPresent()) {
+                    Machine m = machine.get();
+                    machineService.scheduleMachineStart(m.getId(), dateTime);
+                    return ResponseEntity.ok().build();
+                }
+            } else {
+                return ResponseEntity.status(403).build();
+            }
+        }
+        return ResponseEntity.status(401).build();
+    }
+
+    @PatchMapping(value = "/schedule/restart/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> scheduleRestartMachine(@PathVariable ("id") String id,
+     @RequestBody Map<String, String> time) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userService.findByEmail(username);
+
+        if (user.isPresent()) {
+            User u = user.get();
+            if (u.getPermission().getCanRestartMachine() == 1) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime dateTime = LocalDateTime.parse(time.get("time"), formatter);
+                // find machine by id
+                Optional<Machine> machine = machineService.findById(Long.parseLong(id));
+
+                if (machine.isPresent()) {
+                    Machine m = machine.get();
+                    machineService.scheduleMachineRestart(m.getId(), dateTime);
+                    return ResponseEntity.ok().build();
+                }
+            } else {
+                return ResponseEntity.status(403).build();
+            }
+        }
+        return ResponseEntity.status(401).build();
+    }
+
 }

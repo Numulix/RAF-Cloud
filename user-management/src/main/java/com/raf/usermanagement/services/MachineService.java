@@ -14,6 +14,8 @@ import com.raf.usermanagement.models.User;
 import com.raf.usermanagement.repositories.ErrorMessageRepository;
 import com.raf.usermanagement.repositories.MachineRepository;
 import com.raf.usermanagement.repositories.UserRepository;
+import com.raf.usermanagement.tasks.RestartMachineTask;
+import com.raf.usermanagement.tasks.StartMachineTask;
 import com.raf.usermanagement.tasks.StopMachineTask;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,6 +271,40 @@ public class MachineService {
             
             taskScheduler.schedule(
                 new StopMachineTask(m.getId(), user.getId(), machineRepository, errorMessageRepository, userService),
+                scheduleDate);
+        }
+    }
+
+    public void scheduleMachineStart(Long id, LocalDateTime dateTime) {
+        Optional<Machine> machine = machineRepository.findById(id);
+        if (machine.isPresent()) {
+            // get logged in user
+            Optional<User> u = userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            User user = u.get();
+
+            // get the machine
+            Machine m = machine.get();
+            Date scheduleDate = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+            
+            taskScheduler.schedule(
+                new StartMachineTask(m.getId(), user.getId(), machineRepository, errorMessageRepository, userService),
+                scheduleDate);
+        }
+    }
+
+    public void scheduleMachineRestart(Long id, LocalDateTime dateTime) {
+        Optional<Machine> machine = machineRepository.findById(id);
+        if (machine.isPresent()) {
+            // get logged in user
+            Optional<User> u = userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            User user = u.get();
+
+            // get the machine
+            Machine m = machine.get();
+            Date scheduleDate = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+            
+            taskScheduler.schedule(
+                new RestartMachineTask(m.getId(), user.getId(), machineRepository, errorMessageRepository, userService),
                 scheduleDate);
         }
     }
