@@ -36,18 +36,25 @@
         </form>
     </div>
     
-    <div class="p-5">
-        <div class="card mb-3 px-3">
+    <div class="p-5 row">
+        <div class="card mb-3 px-3" *ngFor="let m of machines">
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img src="https://svg-clipart.com/clipart/red/ulwlSTV-computer-monitor-red-clipart.png" alt="Red computer screen" style="max-width: 200px;">
+                    <img *ngIf="m.operationActive == 1" src="https://c.tenor.com/tEBoZu1ISJ8AAAAC/spinning-loading.gif" alt="loading spinner" style="max-width: 200px;">
+                    <img *ngIf="m.status == 'RUNNING' && m.operationActive == 0" src="https://svg-clipart.com/clipart/green/eTRLqR4-computer-monitor-green-clipart.png" alt="Green computer screen" style="max-width: 200px;">
+                    <img *ngIf="m.status == 'STOPPED' && m.operationActive == 0" src="https://svg-clipart.com/clipart/red/ulwlSTV-computer-monitor-red-clipart.png" alt="Red computer screen" style="max-width: 200px;">
                 </div>
-            </div>
-        </div>
-        <div class="card mb-3 px-3">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="https://svg-clipart.com/clipart/green/eTRLqR4-computer-monitor-green-clipart.png" alt="Green computer screen" style="max-width: 200px;">
+                <div class="col-md-6">
+                    <div class="card-body">
+                        <h3 class="card-title">{{m.name}}</h3>
+                        <p class="card-text">Status: {{m.status}}</p>
+                        <p class="card-text">Created at: {{m.createdAt | date }}</p>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex flex-column justify-content-evenly">
+                    <button class="btn btn-success" [disabled]="m.status == 'RUNNING'" (click)="startMachine(m.id)">START</button>
+                    <button class="btn btn-danger" [disabled]="m.status == 'STOPPED'" (click)="stopMachine(m.id)">STOP</button>
+                    <button class="btn btn-warning" [disabled]="m.status == 'STOPPED'">RESTART</button>
                 </div>
             </div>
         </div>

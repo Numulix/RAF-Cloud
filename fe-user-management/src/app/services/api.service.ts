@@ -41,4 +41,29 @@ export class ApiService {
     )
   }
 
+  getAllMachines(): Observable<any> {
+    return this.http.get<any>(`${environment.BASE_URL}/api/machines/all`);
+  }
+
+  startMachine(id: number): Observable<any> {
+    return this.http.patch<any>(
+      `${environment.BASE_URL}/api/machines/start/${id}`,
+      {}
+    )
+  }
+
+  stopMachine(id: number): Observable<any> {
+    return this.http.patch<any>(
+      `${environment.BASE_URL}/api/machines/stop/${id}`,
+      {}
+    )
+  }
+
+  restartMachine(id: number): Observable<any> {
+    return this.http.patch<any>(
+      `${environment.BASE_URL}/api/machines/restart/${id}`,
+      {}
+    )
+  }
+
 }

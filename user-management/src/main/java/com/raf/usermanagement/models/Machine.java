@@ -38,7 +38,6 @@ public class Machine {
 
     private Date createdAt;
 
-    @JsonIgnore
     private boolean operationActive;
 
 }

@@ -23,3 +23,11 @@ export interface User {
   email: string,
   permission: Permissions
 }
+
+export interface Machine {
+  id: number,
+  name: string,
+  status: 'RUNNING' | 'STOPPED',
+  createdAt: Date,
+  operationActive: number
+}
