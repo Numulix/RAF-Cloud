@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Machine } from 'src/app/models';
@@ -11,8 +12,17 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class MachinesComponent implements OnInit {
 
+  datePipe = new DatePipe('en-US');
+
   machines: Machine[] = []
   scheduleDate!: string;
+
+  // search filters
+  machineNameFilter: string = '';
+  statusStopped: boolean = false;
+  statusRunning: boolean = false;
+  dateFrom!: string;
+  dateTo!: string;
 
   constructor(
     private api: ApiService,
@@ -28,8 +38,23 @@ export class MachinesComponent implements OnInit {
     )
   }
 
-  showDate() {
-    console.log(this.scheduleDate.replace('T', ' ')); 
+  search() {
+    if ((this.dateFrom && !this.dateTo) || (!this.dateFrom && this.dateTo)) {
+      this.toastr.error('Please select both date filters or none.')
+      return;
+    }
+
+    this.api.searchMachines(
+      this.machineNameFilter, 
+      this.statusStopped, 
+      this.statusRunning, 
+      this.datePipe.transform(this.dateFrom, 'dd-MM-yyyy'), 
+      this.datePipe.transform(this.dateTo, 'dd-MM-yyyy')
+    ).subscribe(
+      (data: Machine[]) => {
+        this.machines = data
+      }
+    )
   }
 
   startMachine(id: number) {
@@ -70,7 +95,7 @@ export class MachinesComponent implements OnInit {
       }
     )
   }
-  
+
   scheduleStartMachine(id: number) {
     if (!this.scheduleDate) {
       this.toastr.error('Please select a date');

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -97,6 +97,25 @@ export class ApiService {
     return this.http.delete<any>(
       `${environment.BASE_URL}/api/machines/delete/${id}`
     )
+  }
+
+  searchMachines(name: string, statusStopped: boolean, statusRunning: boolean, dateFrom: any, dateTo: any) {
+    let paramsString = '';
+
+    if (name) {
+      paramsString += `name=${name}`;
+    }
+  
+    let statusArray = [];
+    if (statusStopped) { statusArray.push('STOPPED') }
+    if (statusRunning) { statusArray.push('RUNNING') }
+
+    if (statusArray.length > 0) { paramsString += `&status=${statusArray.join(',')}` }
+
+    if (dateFrom && dateTo) { paramsString += `&dateFrom=${dateFrom}&dateTo=${dateTo}` }
+
+    return this.http.get<any>(
+      `${environment.BASE_URL}/api/machines/search?${paramsString}`);
   }
 
 }
