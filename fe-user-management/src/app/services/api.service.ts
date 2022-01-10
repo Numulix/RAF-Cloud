@@ -66,4 +66,31 @@ export class ApiService {
     )
   }
 
+  scheduleStartMachine(id: number, date: string) {
+    return this.http.patch<any>(
+      `${environment.BASE_URL}/api/machines/schedule/start/${id}`,
+      {
+        time: date
+      }
+    )
+  }
+
+  scheduleStopMachine(id: number, date: string) {
+    return this.http.patch<any>(
+      `${environment.BASE_URL}/api/machines/schedule/stop/${id}`,
+      {
+        time: date
+      }
+    )
+  }
+
+  scheduleRestartMachine(id: number, date: string) {
+    return this.http.patch<any>(
+      `${environment.BASE_URL}/api/machines/schedule/restart/${id}`,
+      {
+        time: date
+      }
+    )
+  }
+
 }

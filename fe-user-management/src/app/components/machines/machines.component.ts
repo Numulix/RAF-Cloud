@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Machine } from 'src/app/models';
 import { ApiService } from 'src/app/services/api.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-machines',
@@ -11,10 +12,12 @@ import { ApiService } from 'src/app/services/api.service';
 export class MachinesComponent implements OnInit {
 
   machines: Machine[] = []
+  scheduleDate!: string;
 
   constructor(
     private api: ApiService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    public userService: UserService
   ) { }
 
   ngOnInit(): void {
@@ -23,6 +26,10 @@ export class MachinesComponent implements OnInit {
         this.machines = data
       }
     )
+  }
+
+  showDate() {
+    console.log(this.scheduleDate.replace('T', ' ')); 
   }
 
   startMachine(id: number) {
@@ -60,6 +67,42 @@ export class MachinesComponent implements OnInit {
             this.machines = data
           }
         )
+      }
+    )
+  }
+  
+  scheduleStartMachine(id: number) {
+    if (!this.scheduleDate) {
+      this.toastr.error('Please select a date');
+      return;
+    }
+    this.api.scheduleStartMachine(id, this.scheduleDate.replace('T', ' ')).subscribe(
+      () => {
+        this.toastr.success('Machine start scheduled');
+      }
+    )
+  }
+
+  scheduleStopMachine(id: number) {
+    if (!this.scheduleDate) {
+      this.toastr.error('Please select a date');
+      return;
+    }
+    this.api.scheduleStopMachine(id, this.scheduleDate.replace('T', ' ')).subscribe(
+      () => {
+        this.toastr.success('Machine stop scheduled');
+      }
+    )
+  }
+
+  scheduleRestartMachine(id: number) {
+    if (!this.scheduleDate) {
+      this.toastr.error('Please select a date');
+      return;
+    }
+    this.api.scheduleRestartMachine(id, this.scheduleDate.replace('T', ' ')).subscribe(
+      () => {
+        this.toastr.success('Machine restart scheduled');
       }
     )
   }

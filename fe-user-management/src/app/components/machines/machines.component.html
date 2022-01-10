@@ -44,17 +44,24 @@
                     <img *ngIf="m.status == 'RUNNING' && m.operationActive == 0" src="https://svg-clipart.com/clipart/green/eTRLqR4-computer-monitor-green-clipart.png" alt="Green computer screen" style="max-width: 200px;">
                     <img *ngIf="m.status == 'STOPPED' && m.operationActive == 0" src="https://svg-clipart.com/clipart/red/ulwlSTV-computer-monitor-red-clipart.png" alt="Red computer screen" style="max-width: 200px;">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="card-body">
                         <h3 class="card-title">{{m.name}}</h3>
                         <p class="card-text">Status: {{m.status}}</p>
                         <p class="card-text">Created at: {{m.createdAt | date }}</p>
                     </div>
                 </div>
-                <div class="col-md-2 d-flex flex-column justify-content-evenly">
-                    <button class="btn btn-success" [disabled]="m.status == 'RUNNING'" (click)="startMachine(m.id)">START</button>
-                    <button class="btn btn-danger" [disabled]="m.status == 'STOPPED'" (click)="stopMachine(m.id)">STOP</button>
-                    <button class="btn btn-warning" [disabled]="m.status == 'STOPPED'">RESTART</button>
+                <div class="col-md-2 d-flex flex-column justify-content-evenly p-2">
+                    <button *ngIf="userService.permissions.canStartMachine == 1" class="btn btn-success" [disabled]="m.status == 'RUNNING'" (click)="startMachine(m.id)">START</button>
+                    <button *ngIf="userService.permissions.canStopMachine == 1" class="btn btn-danger" [disabled]="m.status == 'STOPPED'" (click)="stopMachine(m.id)">STOP</button>
+                    <button *ngIf="userService.permissions.canRestartMachine == 1" class="btn btn-warning" [disabled]="m.status == 'STOPPED'" (click)="restartMachine(m.id)">RESTART</button>
+                </div>
+                <div class="col-md-3 d-flex flex-column justify-content-evenly p-2">
+                    <p>Schedule Operation</p>
+                    <input type="datetime-local" class="form-control" [ngModel]="scheduleDate | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="scheduleDate = $event">
+                    <button *ngIf="userService.permissions.canStartMachine == 1" class="btn btn-success" (click)="scheduleStartMachine(m.id)">SCHEDULE START</button>
+                    <button *ngIf="userService.permissions.canStopMachine == 1" class="btn btn-danger" (click)="scheduleStopMachine(m.id)">SCHEDULE STOP</button>
+                    <button *ngIf="userService.permissions.canRestartMachine == 1" class="btn btn-warning" (click)="scheduleRestartMachine(m.id)">SCHEDULE RESTART</button>
                 </div>
             </div>
         </div>
