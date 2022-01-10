@@ -83,8 +83,17 @@ public class MachineController {
         if (user.isPresent()) {
             User u = user.get();
             if (u.getPermission().getCanDestroyMachine() == 1) {
-                machineService.deleteMachine(Long.parseLong(id));
-                return ResponseEntity.ok().build();
+                // find the machine and check if it is stopped
+                Optional<Machine> machine = machineService.findById(Long.parseLong(id));
+                if (!machine.isPresent()) {
+                    return ResponseEntity.status(404).build();
+                }
+                Machine m = machine.get();
+                if (m.getStatus() == Status.STOPPED) {
+                    machineService.deleteMachine(Long.parseLong(id));
+                    return ResponseEntity.ok().build();
+                }
+                return ResponseEntity.status(400).body("Machine is not stopped");
             } else {
                 return ResponseEntity.status(403).build();
             }

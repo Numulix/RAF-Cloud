@@ -93,4 +93,10 @@ export class ApiService {
     )
   }
 
+  destroyMachine(id: number) {
+    return this.http.delete<any>(
+      `${environment.BASE_URL}/api/machines/delete/${id}`
+    )
+  }
+
 }

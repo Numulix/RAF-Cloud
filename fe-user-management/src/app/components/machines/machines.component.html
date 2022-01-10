@@ -49,12 +49,13 @@
                         <h3 class="card-title">{{m.name}}</h3>
                         <p class="card-text">Status: {{m.status}}</p>
                         <p class="card-text">Created at: {{m.createdAt | date }}</p>
+                        <button class="btn btn-danger" (click)="destroyMachine(m.id)" *ngIf="userService.permissions.canDestroyMachine == 1" [disabled]="m.status == 'RUNNING' || m.operationActive == 1">Destroy</button>
                     </div>
                 </div>
                 <div class="col-md-2 d-flex flex-column justify-content-evenly p-2">
-                    <button *ngIf="userService.permissions.canStartMachine == 1" class="btn btn-success" [disabled]="m.status == 'RUNNING'" (click)="startMachine(m.id)">START</button>
-                    <button *ngIf="userService.permissions.canStopMachine == 1" class="btn btn-danger" [disabled]="m.status == 'STOPPED'" (click)="stopMachine(m.id)">STOP</button>
-                    <button *ngIf="userService.permissions.canRestartMachine == 1" class="btn btn-warning" [disabled]="m.status == 'STOPPED'" (click)="restartMachine(m.id)">RESTART</button>
+                    <button *ngIf="userService.permissions.canStartMachine == 1" class="btn btn-success" [disabled]="m.status == 'RUNNING' || m.operationActive == 1" (click)="startMachine(m.id)">START</button>
+                    <button *ngIf="userService.permissions.canStopMachine == 1" class="btn btn-danger" [disabled]="m.status == 'STOPPED' || m.operationActive == 1" (click)="stopMachine(m.id)">STOP</button>
+                    <button *ngIf="userService.permissions.canRestartMachine == 1" class="btn btn-warning" [disabled]="m.status == 'STOPPED' || m.operationActive == 1" (click)="restartMachine(m.id)">RESTART</button>
                 </div>
                 <div class="col-md-3 d-flex flex-column justify-content-evenly p-2">
                     <p>Schedule Operation</p>

@@ -106,4 +106,17 @@ export class MachinesComponent implements OnInit {
       }
     )
   }
+
+  destroyMachine(id: number) {
+    this.api.destroyMachine(id).subscribe(
+      () => {
+        this.toastr.success('Machine destroyed');
+        this.api.getAllMachines().subscribe(
+          (data: Machine[]) => {
+            this.machines = data
+          }
+        )
+      }
+    )
+  }
 }
