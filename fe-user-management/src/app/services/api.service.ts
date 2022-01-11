@@ -122,4 +122,11 @@ export class ApiService {
     return this.http.get<any>(`${environment.BASE_URL}/api/logs/all`);
   }
 
+  createMachine(formData: any) {
+    return this.http.post<any>(
+      `${environment.BASE_URL}/api/machines/create`,
+      formData
+    )
+  }
+
 }

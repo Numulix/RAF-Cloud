@@ -1,1 +1,10 @@
-<p>create-machine works!</p>
+<div class="container mt-5">
+  <h2>Create new machine</h2>
+  <form (ngSubmit)="createMachine()">
+    <div class="form-group">
+      <label class="form-label mt-4" class="form-label">Machine name</label>
+      <input type="text" class="form-control" name="machineName" [(ngModel)]="machineName">
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+  </form>
+</div>
