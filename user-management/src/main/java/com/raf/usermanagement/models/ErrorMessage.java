@@ -39,4 +39,8 @@ public class ErrorMessage {
         this.operationName = operationName;
         this.errorMessage = errorMessage;
     }
+
+    // empty constructor
+    public ErrorMessage() {
+    }
 }

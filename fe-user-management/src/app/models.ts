@@ -31,3 +31,10 @@ export interface Machine {
   createdAt: Date,
   operationActive: number
 }
+
+export interface ErrorMessage {
+  errorDate: Date,
+  machineId: number,
+  operationName: string,
+  errorMessage: string
+}

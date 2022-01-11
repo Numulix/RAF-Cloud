@@ -118,4 +118,8 @@ export class ApiService {
       `${environment.BASE_URL}/api/machines/search?${paramsString}`);
   }
 
+  getErrorLogs() {
+    return this.http.get<any>(`${environment.BASE_URL}/api/logs/all`);
+  }
+
 }
