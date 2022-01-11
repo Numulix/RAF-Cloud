@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from 'src/app/services/api.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-create-machine',
@@ -13,7 +14,8 @@ export class CreateMachineComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    public userService: UserService
   ) { }
 
   ngOnInit(): void {
