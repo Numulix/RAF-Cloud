@@ -49,12 +49,7 @@ public class MachineController {
         Optional<User> user = userService.findByEmail(username);
 
         if (user.isPresent()) {
-            User u = user.get();
-            if (u.getPermission().getCanSearchMachine() == 1) {
-                return ResponseEntity.ok(machineService.getAllUserMachines());
-            } else {
-                return ResponseEntity.status(403).build();
-            }
+            return ResponseEntity.ok(machineService.getAllUserMachines());
         }
         return ResponseEntity.status(401).build();
     }
