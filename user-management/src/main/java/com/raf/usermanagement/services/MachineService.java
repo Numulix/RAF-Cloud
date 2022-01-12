@@ -161,6 +161,7 @@ public class MachineService {
             machineRepository.save(m);
             try {
                 Thread.sleep((long) (Math.random() * (15 - 10) + 10) * 1000);
+                m = machineRepository.findById(id).get();
                 m.setStatus(Status.RUNNING);
                 m.setOperationActive(false);
                 machineRepository.save(m);
@@ -184,6 +185,7 @@ public class MachineService {
             machineRepository.save(m);
             try {
                 Thread.sleep((long) (Math.random() * (15 - 10) + 10) * 1000);
+                m = machineRepository.findById(id).get();
                 m.setStatus(Status.STOPPED);
                 m.setOperationActive(false);
                 machineRepository.save(m);
@@ -207,9 +209,11 @@ public class MachineService {
             machineRepository.save(m);
             try {
                 Thread.sleep((long) (Math.random() * (15 - 10) + 10) * 1000);
+                m = machineRepository.findById(id).get();
                 m.setStatus(Status.STOPPED);
                 machineRepository.save(m);
                 Thread.sleep((long) (Math.random() * (15 - 10) + 10) * 1000);
+                m = machineRepository.findById(id).get();
                 m.setStatus(Status.RUNNING);
                 m.setOperationActive(false);
                 machineRepository.save(m);

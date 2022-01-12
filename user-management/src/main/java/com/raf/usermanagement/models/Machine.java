@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.raf.usermanagement.enums.Status;
@@ -39,5 +40,9 @@ public class Machine {
     private Date createdAt;
 
     private boolean operationActive;
+
+    @Version
+    @JsonIgnore
+    private Long version;
 
 }

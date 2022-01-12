@@ -59,11 +59,13 @@ public class RestartMachineTask implements Runnable {
                         machineRepository.save(m);
                         System.out.println("Stopping machine");
                         Thread.sleep((long) (Math.random() * (7000 - 6000) + 6000));
+                        m = machineRepository.findById(m.getId()).get();
                         m.setStatus(Status.STOPPED);
                         machineRepository.save(m);
                         System.out.println("Machine stopped");
                         System.out.print("Starting machine");
                         Thread.sleep((long) (Math.random() * (8000 - 5000) + 5000));
+                        m = machineRepository.findById(m.getId()).get();
                         m.setStatus(Status.RUNNING);
                         m.setOperationActive(false);
                         machineRepository.save(m);

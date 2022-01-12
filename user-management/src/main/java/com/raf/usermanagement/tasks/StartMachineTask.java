@@ -64,6 +64,7 @@ public class StartMachineTask implements Runnable {
                         errorMessageRepository.save(errorMessage);
                         System.out.println("Error message added to DB");
                     }
+                    m = machineRepository.findById(m.getId()).get();
                     m.setStatus(Status.RUNNING);
                     m.setOperationActive(false);
                     machineRepository.save(m);
