@@ -84,7 +84,13 @@ public class MachineController {
                     return ResponseEntity.status(404).build();
                 }
                 Machine m = machine.get();
+                if (m.isActive()) {
+                    return ResponseEntity.status(400).body("Machine is under operation");
+                }
                 if (m.getStatus() == Status.STOPPED) {
+                    if (m.isActive()) {
+                        return ResponseEntity.status(400).body("Machine is under operation");
+                    }
                     machineService.deleteMachine(Long.parseLong(id));
                     return ResponseEntity.ok().build();
                 }

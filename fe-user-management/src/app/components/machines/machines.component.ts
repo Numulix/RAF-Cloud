@@ -64,6 +64,13 @@ export class MachinesComponent implements OnInit {
         this.api.getAllMachines().subscribe(
           (data: Machine[]) => {
             this.machines = data
+            setTimeout(() => {
+              this.api.getAllMachines().subscribe(
+                (data: Machine[]) => {
+                  this.machines = data
+                }
+              )
+            }, 15000);
           }
         )
       }
@@ -77,6 +84,13 @@ export class MachinesComponent implements OnInit {
         this.api.getAllMachines().subscribe(
           (data: Machine[]) => {
             this.machines = data
+            setTimeout(() => {
+              this.api.getAllMachines().subscribe(
+                (data: Machine[]) => {
+                  this.machines = data
+                }
+              )
+            }, 15000);
           }
         )
       }
@@ -90,6 +104,13 @@ export class MachinesComponent implements OnInit {
         this.api.getAllMachines().subscribe(
           (data: Machine[]) => {
             this.machines = data
+            setTimeout(() => {
+              this.api.getAllMachines().subscribe(
+                (data: Machine[]) => {
+                  this.machines = data
+                }
+              )
+            }, 30000);
           }
         )
       }

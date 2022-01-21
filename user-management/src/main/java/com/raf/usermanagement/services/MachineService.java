@@ -106,43 +106,44 @@ public class MachineService {
 
             // Search by all parameters
             if (name != null && statusList != null && dateFrom != null && dateTo != null) {
-                return machineRepository.findByUserIdAndNameContainingAndStatusInAndCreatedAtBetween(u.getId(), name, statusList, dateFrom, dateTo);
+                return machineRepository.findByUserIdAndNameContainingAndStatusInAndCreatedAtBetweenAndActive(u.getId(), name, statusList, dateFrom, dateTo, true);
             }
 
             // If all parameters except name are null, search by name only
             if (name != null && statusList == null && dateFrom == null && dateTo == null) {
-                return machineRepository.findByUserIdAndNameContaining(u.getId(), name);
+                return machineRepository.findByUserIdAndNameContainingAndActive(u.getId(), name, true);
             }
 
             // If all parameters except status are null, search by status only
             if (name == null && statusList != null && dateFrom == null && dateTo == null) {
-                return machineRepository.findByUserIdAndStatusIn(u.getId(), statusList);
+                return machineRepository.findByUserIdAndStatusInAndActive(u.getId(), statusList, true);
             }
 
             // name and status not null
             if (name != null && statusList != null && dateFrom == null && dateTo == null) {
-                return machineRepository.findByUserIdAndNameContainingAndStatusIn(u.getId(), name, statusList);
+                return machineRepository.findByUserIdAndNameContainingAndStatusInAndActive(u.getId(), name, statusList, true);
             }
 
             // name and date not null
             if (name != null && statusList == null && dateFrom != null && dateTo != null) {
-                return machineRepository.findByUserIdAndNameContainingAndCreatedAtBetween(u.getId(), name, dateFrom, dateTo);
+                return machineRepository.findByUserIdAndNameContainingAndCreatedAtBetweenAndActive(u.getId(), name, dateFrom, dateTo, true);
             }
             
-            // status and date not null
+            // status and date not null and active
             if (name == null && statusList != null && dateFrom != null && dateTo != null) {
-                return machineRepository.findByUserIdAndStatusInAndCreatedAtBetween(u.getId(), statusList, dateFrom, dateTo);
+                return machineRepository.findByUserIdAndStatusInAndCreatedAtBetweenAndActive(u.getId(), statusList, dateFrom, dateTo, true);
             }
 
-            // dates only
+            // dates only that are active
             if (name == null && statusList == null && dateFrom != null && dateTo != null) {
-                return machineRepository.findByUserIdAndCreatedAtBetween(u.getId(), dateFrom, dateTo);
+                return machineRepository.findByUserIdAndCreatedAtBetweenAndActive(u.getId(), dateFrom, dateTo, true);
             }
 
-            // if all parameters are null, just search all user machines
+            // if all parameters are null, just search all user machines which are active
             if (name == null && statusList == null && dateFrom == null && dateTo == null) {
-                return machineRepository.findByUserId(u.getId());
+                return machineRepository.findByUserIdAndActive(u.getId(), true);
             }
+
         }
         return new ArrayList<Machine>();
     }

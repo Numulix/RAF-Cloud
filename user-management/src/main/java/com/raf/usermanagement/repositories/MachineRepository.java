@@ -13,12 +13,12 @@ public interface MachineRepository extends JpaRepository<Machine, Long> {
     List<Machine> findByUserId(Long userId);
     // find all machines by user id and that are active
     List<Machine> findByUserIdAndActive(Long userId, boolean active);
-    List<Machine> findByUserIdAndNameContainingAndStatusInAndCreatedAtBetween(Long userId, String name, List<Status> statuses, Date start, Date end);
-    List<Machine> findByUserIdAndNameContaining(Long userId, String name);
-    List<Machine> findByUserIdAndStatusIn(Long userId, List<Status> statuses);
-    List<Machine> findByUserIdAndNameContainingAndStatusIn(Long userId, String name, List<Status> statuses);
-    List<Machine> findByUserIdAndNameContainingAndCreatedAtBetween(Long userId, String name, Date start, Date end);
-    List<Machine> findByUserIdAndStatusInAndCreatedAtBetween(Long userId, List<Status> statuses, Date start, Date end);
-    List<Machine> findByUserIdAndCreatedAtBetween(Long userId, Date start, Date end);
+    List<Machine> findByUserIdAndNameContainingAndStatusInAndCreatedAtBetweenAndActive(Long userId, String name, List<Status> statuses, Date start, Date end, boolean active);
+    List<Machine> findByUserIdAndNameContainingAndActive(Long userId, String name, boolean active);
+    List<Machine> findByUserIdAndStatusInAndActive(Long userId, List<Status> statuses, boolean active);
+    List<Machine> findByUserIdAndNameContainingAndStatusInAndActive(Long userId, String name, List<Status> statuses, boolean active);
+    List<Machine> findByUserIdAndNameContainingAndCreatedAtBetweenAndActive(Long userId, String name, Date start, Date end, boolean active);
+    List<Machine> findByUserIdAndStatusInAndCreatedAtBetweenAndActive(Long userId, List<Status> statuses, Date start, Date end, boolean active);
+    List<Machine> findByUserIdAndCreatedAtBetweenAndActive(Long userId, Date start, Date end, boolean active);
     Optional<Machine> findByIdAndUserIdAndActive(Long id, Long userId, boolean active);
 }
